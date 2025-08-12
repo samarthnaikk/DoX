@@ -1,7 +1,9 @@
 package com.example.dox.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -9,10 +11,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.dox.data.Priority
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -21,8 +25,8 @@ import java.util.*
 fun AddTodoDialog(
     showDialog: Boolean,
     onDismiss: () -> Unit,
-    onAddRegularTodo: (String, String, Long?) -> Unit,
-    onAddCountdownTodo: (String, String, Int, Long?) -> Unit
+    onAddRegularTodo: (String, String, Long?, Priority?) -> Unit,
+    onAddCountdownTodo: (String, String, Int, Long?, Priority?) -> Unit
 ) {
     if (showDialog) {
         var title by remember { mutableStateOf("") }
@@ -31,6 +35,8 @@ fun AddTodoDialog(
         var totalCount by remember { mutableStateOf("") }
         var showDatePicker by remember { mutableStateOf(false) }
         var selectedDate by remember { mutableStateOf<Long?>(null) }
+        var selectedPriority by remember { mutableStateOf<Priority?>(null) }
+        var showPriorityDropdown by remember { mutableStateOf(false) }
         
         val datePickerState = rememberDatePickerState()
         
@@ -130,6 +136,78 @@ fun AddTodoDialog(
                         )
                     }
                     
+                    // Priority Selection
+                    ExposedDropdownMenuBox(
+                        expanded = showPriorityDropdown,
+                        onExpandedChange = { showPriorityDropdown = it }
+                    ) {
+                        OutlinedTextField(
+                            value = selectedPriority?.displayName ?: "No Priority",
+                            onValueChange = { },
+                            label = { Text("Priority (Optional)") },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .menuAnchor(),
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = showPriorityDropdown)
+                            }
+                        )
+                        
+                        ExposedDropdownMenu(
+                            expanded = showPriorityDropdown,
+                            onDismissRequest = { showPriorityDropdown = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { 
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(12.dp)
+                                                .background(
+                                                    MaterialTheme.colorScheme.outline,
+                                                    CircleShape
+                                                )
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text("No Priority")
+                                    }
+                                },
+                                onClick = {
+                                    selectedPriority = null
+                                    showPriorityDropdown = false
+                                }
+                            )
+                            
+                            Priority.values().forEach { priority ->
+                                DropdownMenuItem(
+                                    text = { 
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(12.dp)
+                                                    .background(
+                                                        when (priority) {
+                                                            Priority.HIGH -> Color(0xFFE53E3E)
+                                                            Priority.MEDIUM -> Color(0xFFFF9500)
+                                                            Priority.LOW -> Color(0xFF38A169)
+                                                        },
+                                                        CircleShape
+                                                    )
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Text(priority.displayName)
+                                        }
+                                    },
+                                    onClick = {
+                                        selectedPriority = priority
+                                        showPriorityDropdown = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    
                     // Due Date Selection
                     OutlinedTextField(
                         value = selectedDate?.let { formatDate(it) } ?: "",
@@ -174,18 +252,20 @@ fun AddTodoDialog(
                                     if (isCountdownType) {
                                         val count = totalCount.toIntOrNull()
                                         if (count != null && count > 0) {
-                                            onAddCountdownTodo(title, description, count, selectedDate)
+                                            onAddCountdownTodo(title, description, count, selectedDate, selectedPriority)
                                             title = ""
                                             description = ""
                                             totalCount = ""
                                             selectedDate = null
+                                            selectedPriority = null
                                             onDismiss()
                                         }
                                     } else {
-                                        onAddRegularTodo(title, description, selectedDate)
+                                        onAddRegularTodo(title, description, selectedDate, selectedPriority)
                                         title = ""
                                         description = ""
                                         selectedDate = null
+                                        selectedPriority = null
                                         onDismiss()
                                     }
                                 }

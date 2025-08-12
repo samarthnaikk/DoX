@@ -16,7 +16,9 @@ data class Todo(
     val totalCount: Int = 0, // Total amount to be done (e.g., 150 questions)
     val completedCount: Int = 0, // Amount completed so far (e.g., 10 questions)
     // Due date feature
-    val dueDate: Long? = null // null means no due date set
+    val dueDate: Long? = null, // null means no due date set
+    // Priority feature
+    val priority: String? = null // null means no priority set, stores Priority enum name
 ) {
     // Helper properties for countdown todos
     val remainingCount: Int
@@ -36,4 +38,8 @@ data class Todo(
     
     val isDueSoon: Boolean
         get() = dueDate != null && !isOverdue && dueDate < System.currentTimeMillis() + (24 * 60 * 60 * 1000) // Due within 24 hours
+    
+    // Helper properties for priority
+    val priorityEnum: Priority?
+        get() = Priority.fromString(priority)
 }

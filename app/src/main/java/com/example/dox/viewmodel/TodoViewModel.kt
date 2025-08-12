@@ -3,6 +3,7 @@ package com.example.dox.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dox.data.Todo
+import com.example.dox.data.Priority
 import com.example.dox.repository.TodoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,20 +32,21 @@ class TodoViewModel(private val repository: TodoRepository) : ViewModel() {
         }
     }
 
-    fun addTodo(title: String, description: String = "", dueDate: Long? = null) {
+    fun addTodo(title: String, description: String = "", dueDate: Long? = null, priority: Priority? = null) {
         if (title.isBlank()) return
         
         viewModelScope.launch {
             val todo = Todo(
                 title = title.trim(),
                 description = description.trim(),
-                dueDate = dueDate
+                dueDate = dueDate,
+                priority = priority?.name
             )
             repository.insertTodo(todo)
         }
     }
     
-    fun addCountdownTodo(title: String, description: String = "", totalCount: Int, dueDate: Long? = null) {
+    fun addCountdownTodo(title: String, description: String = "", totalCount: Int, dueDate: Long? = null, priority: Priority? = null) {
         if (title.isBlank() || totalCount <= 0) return
         
         viewModelScope.launch {
@@ -54,7 +56,8 @@ class TodoViewModel(private val repository: TodoRepository) : ViewModel() {
                 isCountdownType = true,
                 totalCount = totalCount,
                 completedCount = 0,
-                dueDate = dueDate
+                dueDate = dueDate,
+                priority = priority?.name
             )
             repository.insertTodo(todo)
         }

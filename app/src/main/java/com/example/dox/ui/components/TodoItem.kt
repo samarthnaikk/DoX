@@ -1,5 +1,6 @@
 package com.example.dox.ui.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -12,11 +13,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.dox.data.Todo
+import com.example.dox.data.Priority
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -29,8 +32,25 @@ fun TodoItem(
     onDecrementCount: ((Todo) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
+    val priorityColor = when (todo.priorityEnum) {
+        Priority.HIGH -> Color(0xFFE53E3E)
+        Priority.MEDIUM -> Color(0xFFFF9500)
+        Priority.LOW -> Color(0xFF38A169)
+        null -> Color.Transparent
+    }
+    
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .let { cardModifier ->
+                if (todo.priorityEnum != null) {
+                    cardModifier.border(
+                        width = 2.dp,
+                        color = priorityColor,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                } else cardModifier
+            },
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
@@ -77,6 +97,23 @@ fun TodoItem(
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f)
                         )
+                        
+                        // Priority indicator (shows first - higher priority than countdown)
+                        todo.priorityEnum?.let { priority ->
+                            Surface(
+                                color = priorityColor,
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.padding(start = 8.dp)
+                            ) {
+                                Text(
+                                    text = priority.displayName.uppercase(),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
                         
                         // Countdown type indicator
                         if (todo.isCountdownType) {

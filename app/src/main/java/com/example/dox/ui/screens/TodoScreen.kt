@@ -109,11 +109,11 @@ fun TodoScreen(
     AddTodoDialog(
         showDialog = showAddDialog,
         onDismiss = { showAddDialog = false },
-        onAddRegularTodo = { title, description, dueDate ->
-            viewModel.addTodo(title, description, dueDate)
+        onAddRegularTodo = { title, description, dueDate, priority ->
+            viewModel.addTodo(title, description, dueDate, priority)
         },
-        onAddCountdownTodo = { title, description, totalCount, dueDate ->
-            viewModel.addCountdownTodo(title, description, totalCount, dueDate)
+        onAddCountdownTodo = { title, description, totalCount, dueDate, priority ->
+            viewModel.addCountdownTodo(title, description, totalCount, dueDate, priority)
         }
     )
 }
