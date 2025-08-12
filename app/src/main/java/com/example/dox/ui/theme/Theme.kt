@@ -11,33 +11,73 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+private val NothingDarkColorScheme = darkColorScheme(
+    primary = NothingRed,
+    onPrimary = NothingWhite,
+    primaryContainer = NothingRedDark,
+    onPrimaryContainer = NothingWhite,
+    
+    secondary = NothingDarkGray,
+    onSecondary = NothingWhite,
+    secondaryContainer = NothingDarkSurfaceVariant,
+    onSecondaryContainer = NothingWhite,
+    
+    tertiary = NothingDarkGray,
+    onTertiary = NothingWhite,
+    
+    background = NothingDarkBackground,
+    onBackground = NothingWhite,
+    
+    surface = NothingDarkSurface,
+    onSurface = NothingWhite,
+    surfaceVariant = NothingDarkSurfaceVariant,
+    onSurfaceVariant = NothingMediumGray,
+    
+    error = NothingRed,
+    onError = NothingWhite,
+    errorContainer = NothingRedDark,
+    onErrorContainer = NothingWhite,
+    
+    outline = NothingDarkGray,
+    outlineVariant = NothingDarkSurfaceVariant
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+private val NothingLightColorScheme = lightColorScheme(
+    primary = NothingRed,
+    onPrimary = NothingWhite,
+    primaryContainer = NothingLightGray,
+    onPrimaryContainer = NothingBlack,
+    
+    secondary = NothingDarkGray,
+    onSecondary = NothingWhite,
+    secondaryContainer = NothingLightGray,
+    onSecondaryContainer = NothingBlack,
+    
+    tertiary = NothingDarkGray,
+    onTertiary = NothingWhite,
+    
+    background = NothingWhite,
+    onBackground = NothingBlack,
+    
+    surface = NothingWhite,
+    onSurface = NothingBlack,
+    surfaceVariant = NothingLightGray,
+    onSurfaceVariant = NothingDarkGray,
+    
+    error = NothingRed,
+    onError = NothingWhite,
+    errorContainer = NothingLightGray,
+    onErrorContainer = NothingRed,
+    
+    outline = NothingMediumGray,
+    outlineVariant = NothingLightGray
 )
 
 @Composable
 fun DoXTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    // Dynamic color disabled for Nothing OS design consistency
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -45,14 +85,13 @@ fun DoXTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        darkTheme -> NothingDarkColorScheme
+        else -> NothingLightColorScheme
     }
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = NothingTypography,
         content = content
     )
 }
