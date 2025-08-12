@@ -31,19 +31,20 @@ class TodoViewModel(private val repository: TodoRepository) : ViewModel() {
         }
     }
 
-    fun addTodo(title: String, description: String = "") {
+    fun addTodo(title: String, description: String = "", dueDate: Long? = null) {
         if (title.isBlank()) return
         
         viewModelScope.launch {
             val todo = Todo(
                 title = title.trim(),
-                description = description.trim()
+                description = description.trim(),
+                dueDate = dueDate
             )
             repository.insertTodo(todo)
         }
     }
     
-    fun addCountdownTodo(title: String, description: String = "", totalCount: Int) {
+    fun addCountdownTodo(title: String, description: String = "", totalCount: Int, dueDate: Long? = null) {
         if (title.isBlank() || totalCount <= 0) return
         
         viewModelScope.launch {
@@ -52,7 +53,8 @@ class TodoViewModel(private val repository: TodoRepository) : ViewModel() {
                 description = description.trim(),
                 isCountdownType = true,
                 totalCount = totalCount,
-                completedCount = 0
+                completedCount = 0,
+                dueDate = dueDate
             )
             repository.insertTodo(todo)
         }

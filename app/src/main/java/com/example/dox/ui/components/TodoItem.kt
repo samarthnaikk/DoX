@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,9 +34,12 @@ fun TodoItem(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (todo.isCountdownType && todo.isCountdownCompleted) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else MaterialTheme.colorScheme.surface
+            containerColor = when {
+                todo.isOverdue -> MaterialTheme.colorScheme.errorContainer
+                todo.isDueSoon -> MaterialTheme.colorScheme.tertiaryContainer
+                todo.isCountdownType && todo.isCountdownCompleted -> MaterialTheme.colorScheme.primaryContainer
+                else -> MaterialTheme.colorScheme.surface
+            }
         )
     ) {
         Column(
@@ -107,6 +112,40 @@ fun TodoItem(
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     )
+                    
+                    // Due date information
+                    todo.dueDate?.let { dueDate ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(top = 4.dp)
+                        ) {
+                            Icon(
+                                imageVector = if (todo.isOverdue) Icons.Default.Warning else Icons.Default.DateRange,
+                                contentDescription = if (todo.isOverdue) "Overdue" else "Due date",
+                                modifier = Modifier.size(14.dp),
+                                tint = when {
+                                    todo.isOverdue -> MaterialTheme.colorScheme.error
+                                    todo.isDueSoon -> MaterialTheme.colorScheme.tertiary
+                                    else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                }
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = when {
+                                    todo.isOverdue -> "Overdue: ${formatDate(dueDate)}"
+                                    todo.isDueSoon -> "Due soon: ${formatDate(dueDate)}"
+                                    else -> "Due: ${formatDate(dueDate)}"
+                                },
+                                style = MaterialTheme.typography.bodySmall,
+                                color = when {
+                                    todo.isOverdue -> MaterialTheme.colorScheme.error
+                                    todo.isDueSoon -> MaterialTheme.colorScheme.tertiary
+                                    else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                },
+                                fontWeight = if (todo.isOverdue) FontWeight.Medium else FontWeight.Normal
+                            )
+                        }
+                    }
                 }
                 
                 // Delete button

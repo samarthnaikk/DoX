@@ -7,6 +7,9 @@ import kotlinx.coroutines.flow.Flow
 interface TodoDao {
     @Query("SELECT * FROM todos ORDER BY createdAt DESC")
     fun getAllTodos(): Flow<List<Todo>>
+    
+    @Query("SELECT * FROM todos ORDER BY CASE WHEN dueDate IS NULL THEN 1 ELSE 0 END, dueDate ASC, createdAt DESC")
+    fun getAllTodosSortedByDueDate(): Flow<List<Todo>>
 
     @Query("SELECT * FROM todos WHERE id = :id")
     suspend fun getTodoById(id: Int): Todo?

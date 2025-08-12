@@ -14,7 +14,9 @@ data class Todo(
     // Countdown feature fields
     val isCountdownType: Boolean = false,
     val totalCount: Int = 0, // Total amount to be done (e.g., 150 questions)
-    val completedCount: Int = 0 // Amount completed so far (e.g., 10 questions)
+    val completedCount: Int = 0, // Amount completed so far (e.g., 10 questions)
+    // Due date feature
+    val dueDate: Long? = null // null means no due date set
 ) {
     // Helper properties for countdown todos
     val remainingCount: Int
@@ -27,4 +29,11 @@ data class Todo(
         
     val isCountdownCompleted: Boolean
         get() = if (isCountdownType) completedCount >= totalCount else isCompleted
+    
+    // Helper properties for due date
+    val isOverdue: Boolean
+        get() = dueDate != null && dueDate < System.currentTimeMillis() && !isCompleted && (!isCountdownType || !isCountdownCompleted)
+    
+    val isDueSoon: Boolean
+        get() = dueDate != null && !isOverdue && dueDate < System.currentTimeMillis() + (24 * 60 * 60 * 1000) // Due within 24 hours
 }
