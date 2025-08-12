@@ -7,7 +7,7 @@ import android.content.Context
 
 @Database(
     entities = [Todo::class],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class TodoDatabase : RoomDatabase() {

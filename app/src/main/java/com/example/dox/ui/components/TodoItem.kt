@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -205,8 +206,8 @@ fun TodoItem(
                 LinearProgressIndicator(
                     progress = { todo.progressPercentage / 100f },
                     modifier = Modifier.fillMaxWidth(),
-                    color = if (todo.isCountdownCompleted) MaterialTheme.colorScheme.primary 
-                           else MaterialTheme.colorScheme.secondary,
+                    color = Color(0xFF38A169), // Green color for progress
+                    trackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
                 )
                 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -228,6 +229,32 @@ fun TodoItem(
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                         )
+                        
+                        // Pace analysis (only if due date is set)
+                        if (todo.dueDate != null && todo.paceAnalysis.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = todo.paceAnalysis,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = when {
+                                    todo.paceAnalysis.contains("ahead") -> Color(0xFF38A169) // Green
+                                    todo.paceAnalysis.contains("behind") -> Color(0xFFE53E3E) // Red
+                                    todo.paceAnalysis.contains("completed") -> Color(0xFF38A169) // Green
+                                    else -> MaterialTheme.colorScheme.primary // Blue for on track
+                                },
+                                fontWeight = FontWeight.Medium
+                            )
+                            
+                            // Estimated completion date
+                            todo.estimatedCompletionDate?.let { completion ->
+                                Text(
+                                    text = completion,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                    fontStyle = FontStyle.Italic
+                                )
+                            }
+                        }
                     }
                     
                     // +/- buttons
