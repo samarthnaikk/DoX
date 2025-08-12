@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
@@ -29,6 +30,7 @@ fun TodoItem(
     todo: Todo,
     onToggleComplete: (Todo) -> Unit,
     onDelete: (Todo) -> Unit,
+    onEdit: (Todo) -> Unit,
     onIncrementCount: ((Todo) -> Unit)? = null,
     onDecrementCount: ((Todo) -> Unit)? = null,
     modifier: Modifier = Modifier
@@ -186,15 +188,29 @@ fun TodoItem(
                     }
                 }
                 
-                // Delete button
-                IconButton(
-                    onClick = { onDelete(todo) }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete todo",
-                        tint = MaterialTheme.colorScheme.error
-                    )
+                // Action buttons
+                Row {
+                    // Edit button
+                    IconButton(
+                        onClick = { onEdit(todo) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit todo",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    
+                    // Delete button
+                    IconButton(
+                        onClick = { onDelete(todo) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete todo",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
             

@@ -13,6 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dox.ui.components.AddTodoDialog
+import com.example.dox.ui.components.EditTodoDialog
 import com.example.dox.ui.components.TodoItem
 import com.example.dox.viewmodel.TodoViewModel
 
@@ -24,6 +25,8 @@ fun TodoScreen(
     val todos by viewModel.todos.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
+    var showEditDialog by remember { mutableStateOf(false) }
+    var todoToEdit by remember { mutableStateOf<com.example.dox.data.Todo?>(null) }
 
     Scaffold(
         topBar = {
@@ -96,6 +99,10 @@ fun TodoScreen(
                                 todo = todo,
                                 onToggleComplete = { viewModel.toggleTodoComplete(it) },
                                 onDelete = { viewModel.deleteTodo(it) },
+                                onEdit = { 
+                                    todoToEdit = it
+                                    showEditDialog = true
+                                },
                                 onIncrementCount = { viewModel.incrementCountdownProgress(it) },
                                 onDecrementCount = { viewModel.decrementCountdownProgress(it) }
                             )
@@ -114,6 +121,18 @@ fun TodoScreen(
         },
         onAddCountdownTodo = { title, description, totalCount, dueDate, priority ->
             viewModel.addCountdownTodo(title, description, totalCount, dueDate, priority)
+        }
+    )
+    
+    EditTodoDialog(
+        showDialog = showEditDialog,
+        todo = todoToEdit,
+        onDismiss = { 
+            showEditDialog = false 
+            todoToEdit = null
+        },
+        onUpdateTodo = { updatedTodo ->
+            viewModel.updateTodo(updatedTodo)
         }
     )
 }
