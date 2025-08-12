@@ -42,6 +42,21 @@ class TodoViewModel(private val repository: TodoRepository) : ViewModel() {
             repository.insertTodo(todo)
         }
     }
+    
+    fun addCountdownTodo(title: String, description: String = "", totalCount: Int) {
+        if (title.isBlank() || totalCount <= 0) return
+        
+        viewModelScope.launch {
+            val todo = Todo(
+                title = title.trim(),
+                description = description.trim(),
+                isCountdownType = true,
+                totalCount = totalCount,
+                completedCount = 0
+            )
+            repository.insertTodo(todo)
+        }
+    }
 
     fun toggleTodoComplete(todo: Todo) {
         viewModelScope.launch {
@@ -58,6 +73,25 @@ class TodoViewModel(private val repository: TodoRepository) : ViewModel() {
     fun updateTodo(todo: Todo) {
         viewModelScope.launch {
             repository.updateTodo(todo)
+        }
+    }
+    
+    // Countdown specific methods
+    fun incrementCountdownProgress(todo: Todo, incrementBy: Int = 1) {
+        viewModelScope.launch {
+            repository.incrementCountdownProgress(todo, incrementBy)
+        }
+    }
+    
+    fun decrementCountdownProgress(todo: Todo, decrementBy: Int = 1) {
+        viewModelScope.launch {
+            repository.decrementCountdownProgress(todo, decrementBy)
+        }
+    }
+    
+    fun updateCountdownProgress(todo: Todo, newCompletedCount: Int) {
+        viewModelScope.launch {
+            repository.updateCountdownProgress(todo, newCompletedCount)
         }
     }
 }

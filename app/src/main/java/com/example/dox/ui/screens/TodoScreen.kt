@@ -95,7 +95,9 @@ fun TodoScreen(
                             TodoItem(
                                 todo = todo,
                                 onToggleComplete = { viewModel.toggleTodoComplete(it) },
-                                onDelete = { viewModel.deleteTodo(it) }
+                                onDelete = { viewModel.deleteTodo(it) },
+                                onIncrementCount = { viewModel.incrementCountdownProgress(it) },
+                                onDecrementCount = { viewModel.decrementCountdownProgress(it) }
                             )
                         }
                     }
@@ -107,8 +109,11 @@ fun TodoScreen(
     AddTodoDialog(
         showDialog = showAddDialog,
         onDismiss = { showAddDialog = false },
-        onAddTodo = { title, description ->
+        onAddRegularTodo = { title, description ->
             viewModel.addTodo(title, description)
+        },
+        onAddCountdownTodo = { title, description, totalCount ->
+            viewModel.addCountdownTodo(title, description, totalCount)
         }
     )
 }

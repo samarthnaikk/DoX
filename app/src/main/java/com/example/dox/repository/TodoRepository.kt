@@ -33,4 +33,26 @@ class TodoRepository(private val todoDao: TodoDao) {
     suspend fun toggleTodoComplete(todo: Todo) {
         todoDao.updateTodo(todo.copy(isCompleted = !todo.isCompleted))
     }
+    
+    // Countdown specific methods
+    suspend fun incrementCountdownProgress(todo: Todo, incrementBy: Int = 1) {
+        if (todo.isCountdownType) {
+            val newCompletedCount = (todo.completedCount + incrementBy).coerceAtMost(todo.totalCount)
+            todoDao.updateTodo(todo.copy(completedCount = newCompletedCount))
+        }
+    }
+    
+    suspend fun decrementCountdownProgress(todo: Todo, decrementBy: Int = 1) {
+        if (todo.isCountdownType) {
+            val newCompletedCount = (todo.completedCount - decrementBy).coerceAtLeast(0)
+            todoDao.updateTodo(todo.copy(completedCount = newCompletedCount))
+        }
+    }
+    
+    suspend fun updateCountdownProgress(todo: Todo, newCompletedCount: Int) {
+        if (todo.isCountdownType) {
+            val validCount = newCompletedCount.coerceIn(0, todo.totalCount)
+            todoDao.updateTodo(todo.copy(completedCount = validCount))
+        }
+    }
 }

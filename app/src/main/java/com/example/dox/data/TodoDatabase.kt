@@ -7,7 +7,7 @@ import android.content.Context
 
 @Database(
     entities = [Todo::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class TodoDatabase : RoomDatabase() {
@@ -23,7 +23,9 @@ abstract class TodoDatabase : RoomDatabase() {
                     context.applicationContext,
                     TodoDatabase::class.java,
                     "todo_database"
-                ).build()
+                )
+                .fallbackToDestructiveMigration() // For development - removes all data on schema change
+                .build()
                 INSTANCE = instance
                 instance
             }
